@@ -30,6 +30,8 @@ options(width = 65)
 
 # set figure parameters for knitr
 knitr::opts_chunk$set(
+  warning = FALSE, 
+  message = FALSE,
   fig.width = 7, # 7" width
   fig.asp = 0.618, # the golden ratio
   fig.retina = 3, # dpi multiplier for displaying HTML output on retina
@@ -40,7 +42,7 @@ knitr::opts_chunk$set(
 
 ```
 
-```{r message=FALSE}
+```{r}
 #import data, clean column names, and convert outcome values to factors
 diabetes <- read_csv(here("data/diabetes.csv")) |>
   clean_names() |>
