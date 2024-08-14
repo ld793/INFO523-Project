@@ -97,30 +97,30 @@ p_glucose <- diabetes |>
   geom_histogram(color = "#142a51", fill = "cornsilk") +
   geom_vline(aes(xintercept = mean(glucose)),
                color = "#142a51", 
-               size = 1.25) +
+               linewidth = 1.25) +
   geom_vline(aes(xintercept = mean(glucose) + sd(glucose)), 
              color = "#ab0520", 
-             size = 1, 
+             linewidth = 1, 
              linetype = "dashed") +
   geom_vline(aes(xintercept = mean(glucose) + 2*sd(glucose)), 
              color = "#ab0520", 
-             size = 1, 
+             linewidth = 1, 
              linetype = "dashed") +
   geom_vline(aes(xintercept = mean(glucose) + 3*sd(glucose)), 
              color = "#ab0520", 
-             size = 1, 
+             linewidth = 1, 
              linetype = "dashed") +
   geom_vline(aes(xintercept = mean(glucose) - sd(glucose)), 
              color = "#ab0520", 
-             size = 1, 
+             linewidth = 1, 
              linetype = "dashed") +
   geom_vline(aes(xintercept = mean(glucose) - 2*sd(glucose)), 
              color = "#ab0520", 
-             size = 1, 
+             linewidth = 1, 
              linetype = "dashed") +
   geom_vline(aes(xintercept = mean(glucose) - 3*sd(glucose)), 
              color = "#ab0520", 
-             size = 1, 
+             linrwidth = 1, 
              linetype = "dashed") +
   theme_minimal() +
   coord_cartesian(ylim = c(0, NA)) +
