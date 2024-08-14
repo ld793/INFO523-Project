@@ -1,0 +1,224 @@
+---
+title:  'Class Project'
+subtitle: 'INFO 523'
+author:
+- name: Student -  Luis Diaz
+  affiliation: Systems and Industrial Engineering, University of Arizona
+- name: Instructor -  Cristian Román-Palacios
+  affiliation: School of Information, University of Arizona, Tucson, AZ
+tags: [R, RStudio, project]
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, echo=FALSE, message=FALSE}
+# Install and load packages
+if(!require(pacman))
+  install.packages("pacman")
+
+pacman::p_load(tidyverse,
+               janitor, 
+               here, 
+               patchwork)
+
+# set theme for ggplot2
+ggplot2::theme_set(ggplot2::theme_minimal(base_size = 14))
+
+# set width of code output
+options(width = 65)
+
+# set figure parameters for knitr
+knitr::opts_chunk$set(
+  fig.width = 7, # 7" width
+  fig.asp = 0.618, # the golden ratio
+  fig.retina = 3, # dpi multiplier for displaying HTML output on retina
+  fig.align = "center", # center align figures
+  dpi = 300 # higher dpi, sharper image
+)
+
+
+```
+
+```{r message=FALSE}
+#import data, clean column names, and convert outcome values to factors
+diabetes <- read_csv(here("data/diabetes.csv")) |>
+  clean_names() |>
+  mutate(outcome = factor(outcome, levels = c(0,1), labels = c("No Diabetes", "Diabetes")))
+
+
+# Explore Data
+
+glimpse(diabetes)
+
+diabetes %>% 
+  select_if(is.numeric) %>%  
+  gather(cols, value) %>%  
+  ggplot(aes(x = value)) + 
+  geom_histogram(color = "cornsilk", fill="#142a51") + 
+  facet_wrap(.~cols, scales = "free")
+
+# Remove 0 values that should be NA according to data source
+diabetes[,2:6][diabetes[,2:6] == 0] <- NA
+
+diabetes %>% 
+  select_if(is.numeric) %>%  
+  gather(cols, value) %>%  
+  ggplot(aes(x = value)) + 
+  geom_histogram(color = "cornsilk", fill="#142a51") + 
+  facet_wrap(.~cols, scales = "free")
+
+# Boxplot (IQR) Method
+diabetes %>% 
+  select_if(is.numeric) %>%  
+  gather(cols, value) %>% 
+  ggplot(aes(y = value)) +
+  geom_boxplot(color = "#142a51", fill="cornsilk") + 
+  facet_wrap(.~cols, scales = "free", nrow = 2) +
+  theme_minimal() +
+  coord_cartesian(ylim = c(0, NA)) +
+  labs(
+    title = "Boxplot of each variable of Diabetes Patient Dataset"
+  )+
+  theme(
+    plot.title.position = "plot",
+    axis.title.y = element_blank(), 
+    axis.text.x = element_blank()
+  )
+
+
+# Standard Deviation Method
+
+p_glucose <- diabetes |>
+  filter(!is.na(glucose))|>
+  ggplot(aes(x = glucose)) +
+  geom_histogram(color = "#142a51", fill = "cornsilk") +
+  geom_vline(aes(xintercept = mean(glucose)),
+               color = "#142a51", 
+               size = 1.25) +
+  geom_vline(aes(xintercept = mean(glucose) + sd(glucose)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(glucose) + 2*sd(glucose)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(glucose) + 3*sd(glucose)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(glucose) - sd(glucose)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(glucose) - 2*sd(glucose)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(glucose) - 3*sd(glucose)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  theme_minimal() +
+  coord_cartesian(ylim = c(0, NA)) +
+  labs(
+    title = "Glucose-Level histogram with standard deviation lines",
+    x = "Glucose Level"
+  )+
+  theme(
+    plot.title.position = "plot",
+    axis.title.y = element_blank()
+  )
+
+p_bmi <- diabetes |>
+  filter(!is.na(bmi))|>
+  ggplot(aes(x = bmi)) +
+  geom_histogram(color = "#142a51", fill = "cornsilk") +
+  geom_vline(aes(xintercept = mean(bmi)),
+               color = "#142a51", 
+               size = 1.25) +
+  geom_vline(aes(xintercept = mean(bmi) + sd(bmi)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(bmi) + 2*sd(bmi)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(bmi) + 3*sd(bmi)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(bmi) - sd(bmi)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(bmi) - 2*sd(bmi)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(bmi) - 3*sd(bmi)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  theme_minimal() +
+  coord_cartesian(ylim = c(0, NA)) +
+  labs(
+    title = "BMI histogram with standard deviation lines",
+    x = "BMI"
+  )+
+  theme(
+    plot.title.position = "plot",
+    axis.title.y = element_blank()
+  )
+
+p_bp <- diabetes |>
+  filter(!is.na(blood_pressure))|>
+  ggplot(aes(x = blood_pressure)) +
+  geom_histogram(color = "#142a51", fill = "cornsilk") +
+  geom_vline(aes(xintercept = mean(blood_pressure)),
+               color = "#142a51", 
+               size = 1.25) +
+  geom_vline(aes(xintercept = mean(blood_pressure) + sd(blood_pressure)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(blood_pressure) + 2*sd(blood_pressure)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(blood_pressure) + 3*sd(blood_pressure)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(blood_pressure) - sd(blood_pressure)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(blood_pressure) - 2*sd(blood_pressure)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(blood_pressure) - 3*sd(blood_pressure)), 
+             color = "#ab0520", 
+             size = 1, 
+             linetype = "dashed") +
+  theme_minimal() +
+  coord_cartesian(ylim = c(0, NA)) +
+  labs(
+    title = "Blood Pressure histogram with standard deviation lines",
+    x = "Blood Pressure"
+  )+
+  theme(
+    plot.title.position = "plot",
+    axis.title.y = element_blank()
+  )
+
+# patchwork of plots
+p_glucose / p_bmi / p_bp
+
+
+
+```
+
